@@ -1,0 +1,47 @@
+#!/usr/bin/env python2
+
+''' 
+Author: Daniel Duan <danmarner@gmail.com>
+License: BSD
+'''
+
+
+from os import listdir, path
+from plistlib import readPlist
+from getpass import getuser
+import sys
+
+
+def extract(source_path, target_path):
+    tpl = '\n'.join([
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<opml version="1.0">',
+        '<head>',
+        '    <title>%s\'s Mail.app RSS subscriptions</title>' % getuser(),
+        '</head>',
+        '<body>',
+        '<outline text="Mail.app Imports" title="Mail.app Imports">',
+        '%s',
+        '</outline>',
+        '</body>',
+        '</opml>'])
+    feed_tpl = '<outline text="%s" title="%s" type="rss" xmlUrl="%s" />'
+    feeds = []
+
+    for feed in listdir(source_path):
+        if feed.endswith('rssmbox'):
+            feeds.append(feed_tpl % (
+                feed[:-8],
+                feed[:-8],
+                readPlist("%s/%s/Info.plist" % (
+                    source_path,
+                    feed
+                ))['RSSFeedURLString']))
+    print >> open(target_path, 'w'), tpl % '\n'.join(feeds)
+
+if __name__ == '__main__':
+    try:
+        target = sys.argv[1]
+    except IndexError:
+        target = path.expanduser('~/Desktop/MailAppRSS.opml')
+    extract(path.expanduser('~/Library/Mail/RSS'), target)
