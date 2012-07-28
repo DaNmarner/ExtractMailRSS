@@ -1,9 +1,11 @@
-# ExtractMailRSS #
+ExtractMailRSS
+==============
 
 Extracts Mail.app RSS subscriptions and generates a OPML file that 
 contains them.
 
-## Usage ##
+Usage
+--------------
 
 Double click to get `MailAppRss.opml` on Desktop.
 
